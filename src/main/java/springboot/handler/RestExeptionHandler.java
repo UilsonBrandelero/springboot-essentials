@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import io.micrometer.common.lang.NonNull;
 import io.micrometer.common.lang.Nullable;
 import springboot.exeption.BadRequestException;
 import springboot.exeption.BadRequestExceptionDetails;
@@ -38,8 +39,7 @@ public class RestExeptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-   
-    @Nullable
+    @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 

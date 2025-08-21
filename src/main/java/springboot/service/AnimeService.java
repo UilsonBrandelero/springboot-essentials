@@ -58,4 +58,8 @@ public class AnimeService {
         return animeRepository.findByName(name);
 
     }
+
+    public List<Anime> listAllNoPageable() {
+        return animeRepository.findAll();
+    }
 }
