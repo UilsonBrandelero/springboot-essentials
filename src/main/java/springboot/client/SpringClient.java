@@ -1,6 +1,5 @@
 package springboot.client;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.core.ParameterizedTypeReference;
