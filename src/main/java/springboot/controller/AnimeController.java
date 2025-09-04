@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import springboot.domain.Anime;
 import springboot.requests.AnimePostRequestBody;
 import springboot.requests.AnimePutRequestBody;
@@ -36,12 +39,21 @@ import springboot.service.AnimeService;
 @RestController
 @RequestMapping("animes")
 @RequiredArgsConstructor
+@Log4j2
 
 public class AnimeController {
     private final AnimeService animeService;
     
     @GetMapping("list")
     public ResponseEntity<Page<Anime>> list(Pageable pageable) {
+        
+        return new ResponseEntity<>(animeService.listAll(pageable), HttpStatus.OK);
+    }
+    @GetMapping("list-user-details")
+    public ResponseEntity<Page<Anime>> listUserDetails(Pageable pageable,
+                                        @AuthenticationPrincipal UserDetails userDetails) {
+                                                                                                                                                                                         
+        log.info(userDetails);
         return new ResponseEntity<>(animeService.listAll(pageable), HttpStatus.OK);
     }
     @GetMapping("/list_no_pageable")
@@ -57,13 +69,17 @@ public class AnimeController {
     public ResponseEntity<List<Anime>> findByName(@RequestParam() String name) {
         return new ResponseEntity<>(animeService.findByName(name), HttpStatus.OK);
     }
-    @PostMapping()
+    @PostMapping("/admin/save")
     public ResponseEntity<Anime> save(@RequestBody @Valid AnimePostRequestBody anime) {
 
         return new ResponseEntity<>(animeService.save(anime),HttpStatus.CREATED);
     }
+    @PostMapping("/test")
+    public String post() {
+        return "Deu boa";
+    }
     
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
      public ResponseEntity<Void> delete(@PathVariable Long id){
         animeService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -15,47 +15,50 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import io.micrometer.common.lang.NonNull;
 import springboot.exeption.BadRequestException;
 import springboot.exeption.BadRequestExceptionDetails;
 import springboot.exeption.ValidationExeptionDetails;
 
+@SuppressWarnings("Java(67109781)")
 @ControllerAdvice
 public class RestExeptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<BadRequestExceptionDetails> handlerBadRequestException(
-            BadRequestException badRequestException) {
-        return new ResponseEntity<>(
-                BadRequestExceptionDetails.builder()
-                        .timestamp(LocalDateTime.now())
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .title("Bad Request Exeption, Check the Documentation")
-                        .details(badRequestException.getMessage())
-                        .developerMessage(badRequestException.getClass().getName())
-                        .build(),
-                HttpStatus.BAD_REQUEST);
+        @ExceptionHandler(BadRequestException.class)
+        public ResponseEntity<BadRequestExceptionDetails> handlerBadRequestException(
+                        BadRequestException badRequestException) {
+                return new ResponseEntity<>(
+                                BadRequestExceptionDetails.builder()
+                                                .timestamp(LocalDateTime.now())
+                                                .status(HttpStatus.BAD_REQUEST.value())
+                                                .title("Bad Request Exeption, Check the Documentation")
+                                                .details(badRequestException.getMessage())
+                                                .developerMessage(badRequestException.getClass().getName())
+                                                .build(),
+                                HttpStatus.BAD_REQUEST);
 
-    }
+        }
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            @NonNull MethodArgumentNotValidException ex, @NonNull HttpHeaders headers, @NonNull HttpStatusCode status, @NonNull WebRequest request) {
+        @SuppressWarnings("null")
+        @Override
+        protected ResponseEntity<Object> handleMethodArgumentNotValid(
+                        MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status,
+                        WebRequest request) {
 
-        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        String filds = fieldErrors.stream().map(FieldError::getField).collect(Collectors.joining(", "));
-        String fildsMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
+                List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+                String filds = fieldErrors.stream().map(FieldError::getField).collect(Collectors.joining(", "));
+                String fildsMessage = fieldErrors.stream().map(FieldError::getDefaultMessage)
+                                .collect(Collectors.joining(", "));
 
-        ValidationExeptionDetails validationExeptionDetails = ValidationExeptionDetails.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .title("ValidationExeptionError, Check the Documentation")
-                .details(ex.getMessage())
-                .developerMessage(ex.getClass().getName())
-                .filds(fildsMessage)
-                .fildsMassege(filds)
-                .build();
+                ValidationExeptionDetails validationExeptionDetails = ValidationExeptionDetails.builder()
+                                .timestamp(LocalDateTime.now())
+                                .status(HttpStatus.BAD_REQUEST.value())
+                                .title("ValidationExeptionError, Check the Documentation")
+                                .details(ex.getMessage())
+                                .developerMessage(ex.getClass().getName())
+                                .filds(fildsMessage)
+                                .fildsMassege(filds)
+                                .build();
 
-        return handleExceptionInternal(ex, validationExeptionDetails, headers, status, request);
-    }
+                return handleExceptionInternal(ex, validationExeptionDetails, headers, status, request);
+        }
 
 }
